@@ -58,6 +58,7 @@ const sigFormat = urlSafe(
   z.enum([
     'booklet',
     'perfect',
+    'fukurotoji',
     'standardsig',
     'customsig',
     '1_3rd',

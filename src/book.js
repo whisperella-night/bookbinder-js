@@ -246,9 +246,10 @@ export class Book {
 
     switch (this.format) {
       case 'perfect':
+      case 'fukurotoji':
       case 'booklet':
-        if (this.format == 'perfect') {
-          // Perfect bind is a special case where sig size is 1
+        if (this.format == 'perfect' || this.format == 'fukurotoji') {
+          // Perfect bind & fukurotoji (pouch-binding) is a special case where sig size is 1
           this.sigsize = 1;
         } else {
           // Booklets are a special case where sig size is the total book size
@@ -263,7 +264,8 @@ export class Book {
           this.orderedpages,
           this.sigsize,
           this.per_sheet,
-          this.duplexrotate
+          this.duplexrotate,
+          this.format
         );
 
         if (this.customsig) {
@@ -327,7 +329,8 @@ export class Book {
       this.format == 'perfect' ||
       this.format == 'booklet' ||
       this.format == 'standardsig' ||
-      this.format == 'customsig'
+      this.format == 'customsig' ||
+      this.format == 'fukurotoji'
     ) {
       const signatures = [{}];
       previewPdf = await this.generateClassicFiles(isPreview, signatures);

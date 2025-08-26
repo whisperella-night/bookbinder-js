@@ -177,3 +177,32 @@ export const PERFECTBOUND_LAYOUTS = {
     rotate: [12, 9, 6, 7, 23, 22, 25, 28, 20, 17, 30, 31, 15, 14, 1, 4],
   },
 };
+
+
+export const FUKUROTOJI_LAYOUTS = {
+  /*
+    For page layouts: pages are 1-indexed for sanity reasons. Fukurotoji (pouch-binding) structurally requires the print to be single-sided,
+
+    allowing the sheet to be folded in half, with the fold acting as the foredge of the book.
+  */
+  4: {
+    front: [2, 1],
+    back: [4, 3],
+    rotate: [3, 4],
+  },
+  8: {
+    front: [2, 1, 4, 3],
+    back: [6, 5, 8, 7],
+    rotate: [7, 8, 5, 6],
+  },
+  16: {
+    front: [2, 1, 4, 3, 6, 5, 8, 7],
+    back: [10, 9, 12, 11, 14, 13, 16, 15],
+    rotate: [15, 16, 13, 14, 11, 12, 9, 10],
+  },
+  32: {
+    front: [2, 1, 4, 3, 6, 5, 8, 7, 10, 9, 12, 11, 14, 13, 16, 15],
+    back: [18, 17, 20, 19, 22, 21, 24, 23, 26, 25, 28, 27, 30, 29, 32, 31],
+    rotate: [31, 32, 29, 30, 27, 28, 25, 26, 23, 24, 21, 22, 19, 20, 17, 18],
+  }
+};

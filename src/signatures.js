@@ -3,22 +3,26 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 import { BOOKLET_LAYOUTS } from './constants';
+import { FUKUROTOJI_LAYOUTS } from './constants';
 
 export class Signatures {
   // Takes a list of pagenumbers, splits them evenly, then rearranges the pages in each chunk.
+  // Update (08/2025): Now also handles fukurotoji (pouch-binding) format.
   /**
    * Create a signature.
    * @param {number[]} pages - List of pages in a book.
    * @param {number} per_sheet - number of pages per sheet (front and back combined)
    * @param {boolean} duplexrotate - whether to rotate alternating sheets or not.
+   * @param {string} format - signature format expected ('booklet', 'perfect', 'fukurotoji', etc)
    */
 
-  constructor(pages, sigsize, per_sheet, duplexrotate) {
+  constructor(pages, sigsize, per_sheet, duplexrotate, format) {
     this.sigsize = sigsize;
     this.duplex = false;
     this.inputpagelist = pages;
     this.per_sheet = per_sheet || 4; // pages per sheet - default is 4.
     this.duplexrotate = duplexrotate || false;
+    this.format = format || 'booklet'; // default is booklet
 
     this.pagelistdetails = [];
 
@@ -83,6 +87,7 @@ export class Signatures {
         this.duplex,
         this.per_sheet,
         this.duplexrotate,
+        this.format,
         i
       );
       newsigs.push(pagelistdetails);
@@ -123,11 +128,12 @@ export class Signatures {
    * @param {boolean} duplex - Whether both front and back sides go in the same file or not.
    * @param {number} per_sheet - number of pages per sheet (front and back combined)
    * @param {boolean} duplexrotate - whether to rotate alternating sheets or not.
+   * @param {string} format - signature format expected ('booklet', 'perfect', 'fukurotoji', etc)
    * @param {number} sig_num - signature number (0 indexed)
    */
-  booklet(pages, duplex, per_sheet, duplexrotate, sig_num) {
+  booklet(pages, duplex, per_sheet, duplexrotate, format, sig_num) {
     const pagelistdetails = duplex ? [[]] : [[], []];
-    const { front, rotate, back } = BOOKLET_LAYOUTS[per_sheet];
+    const { front, rotate, back } = (format == 'fukurotoji') ? FUKUROTOJI_LAYOUTS[per_sheet] : BOOKLET_LAYOUTS[per_sheet];
 
     const center = pages.length / 2; // because of zero indexing, this is actually the first page after the center fold
     const pageblock = per_sheet / 2; // number of pages before and after the center fold, per sheet
