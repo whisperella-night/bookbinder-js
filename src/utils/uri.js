@@ -1,13 +1,18 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+/**
+ * @overview Quick functions for parsing and updating the provided URLs.
+ * @license MPL-2.0 (a copy of the MPL can be obtained at https://mozilla.org/MPL/2.0/)
+ *
+ * @module uri
+ * @exports { toUrlParams, setUrlParams, clearUrlParams, updateWindowLocation }
+ */
 
 import { defaultConfig } from '../models/configuration';
 
 /**
- * Gets parameters from a URL.
- * @param { string } url The URL to get the params from
- * @returns { Record<string, unknown> } The URL parameters
+ * Parses application settings from provided URL, and returns record of key/value pairs containing this info.
+ * 
+ * @param {string} url - URL to be parsed
+ * @returns {Record<string, unknown>} record of imposition settings taken from provided URL
  */
 export const toUrlParams = (url) => {
   const params = new URL(url).searchParams.entries();
@@ -15,10 +20,11 @@ export const toUrlParams = (url) => {
 };
 
 /**
- * Sets parameters on a URL.
- * @param { string } url The URL to set the params on
- * @param { Record<string, unknown> } params The params to set
- * @returns { string } A new URL string with the params set
+ * Adds parameters to provided URL's searchParams (disregarding default values).
+ *
+ * @param {string} url - URL to be updated
+ * @param {Record<string, unknown>} params - key/value record of imposition settings
+ * @returns {string} new URL string with appended parameters
  */
 export const setUrlParams = (url, params) => {
   const urlRepresentation = new URL(url);
@@ -40,9 +46,10 @@ export const setUrlParams = (url, params) => {
 };
 
 /**
- * Clears parameters from a URL.
- * @param { string } url The URL to clear the params from
- * @returns { string } A new URL object with no params
+ * Clears parameters from provided URL.
+ *
+ * @param {string} url - URL to be reset
+ * @returns {string} updated URL with empty search/query string
  */
 export const clearUrlParams = (url) => {
   const urlRepresentation = new URL(url);
@@ -51,8 +58,9 @@ export const clearUrlParams = (url) => {
 };
 
 /**
- * Updates the window location.
- * @param { string } url The URL to update the location to
+ * Updates browser window location to provided URL.
+ *
+ * @param {string} url - new browser window location
  */
 export const updateWindowLocation = (url) => {
   window.history.pushState({}, '', url.toString());

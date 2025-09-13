@@ -113,3 +113,8 @@ docs/*.aux
 
 # Firefox debug storage
 tmp
+
+# VSCode Personal Settings
+.vscode/settings.json
+TODO.json
+src/AI Overview

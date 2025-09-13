@@ -1,8 +1,23 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+/**
+ * @overview Constants used throughout the application for page sizes and imposition schemes.
+ * @license MPL-2.0 (a copy of the MPL can be obtained at https://mozilla.org/MPL/2.0/)
+ * 
+ * @module constants
+ * @exports {LINE_LEN, PAGE_SIZES, TARGET_BOOK_SIZE, PAGE_LAYOUTS, BOOKLET_LAYOUTS, PERFECTBOUND_LAYOUTS}
+ */
 
-/** units in "pt" */
+/**
+ * Default line length for crop and fold marks (in pt).
+ * @constant {number}
+ */
+export const LINE_LEN = 18;
+
+
+/**
+ * Page sizes in points (pt), keyed by name.
+ * @typedef {Object<string, number[]>} LayoutSizes
+ * @constant {StandardPageSizes}
+ */
 export const PAGE_SIZES = {
   LETTER: [612, 792],
   NOTE: [540, 720],
@@ -55,13 +70,22 @@ export const PAGE_SIZES = {
   PENGUIN_LARGE_PAPERBACK: [365, 561],
 };
 
+/**
+ * Target book sizes for standard and large formats.
+ * @type {Object<string, number[]>}
+ * @property {number[]} standard - Standard book size [width, height] in points.
+ */
 export const TARGET_BOOK_SIZE = {
   standard: [314.5, 502.0],
   large: [368.5, 558.5],
 };
 
-export const LINE_LEN = 18;
 
+/**
+ * Layout definitions for folio, quarto, octavo, and sextodecimo impositions.
+ * Each layout specifies rotations, orientation, rows, columns, and pages per sheet.
+ * @type {Object<string, Object>}
+ */
 export const PAGE_LAYOUTS = {
   /*
 	Pages in these layouts are assumed to be already reordered. Layout should go left to right, top to bottom.
@@ -118,6 +142,11 @@ export const PAGE_LAYOUTS = {
   },
 };
 
+/**
+ * Imposition templates for booklet binding, keyed by pages per sheet.
+ * Each template includes front, back, and rotate arrays (1-indexed).
+ * @type {Object<number, Object>}
+ */
 export const BOOKLET_LAYOUTS = {
   /*
     For page layouts: pages are 1-indexed for sanity reasons, and the order for the back list must be reversed
@@ -148,6 +177,22 @@ export const BOOKLET_LAYOUTS = {
   },
 };
 
+/**
+ * Page layout order arrays (front, back, rotate), based on expected pages per sheet and binding style.
+ * @typedef {Object<pagesPerSheet: number, layoutOrdering: Object>} ImpositionLayout
+ * 
+ * @property {number} pagesPerSheet - number of pages per side of sheet
+ * @property {Object} layoutOrdering - layout object containing front, back, and rotate arrays
+ * @property {number[]} layoutOrdering.front - array of page numbers for front side (1-indexed)
+ * @property {number[]} layoutOrdering.back - array of page numbers for back side (1-indexed, reversed order)
+ * @property {number[]} layoutOrdering.rotate - array of rotation degrees for each page position (1-indexed)
+ */
+
+/**
+ * Imposition templates for perfect bound books, keyed by pages per sheet.
+ * Each template includes front, back, and rotate arrays (1-indexed).
+ * @type ImpositionLayout
+ */
 export const PERFECTBOUND_LAYOUTS = {
   /*
     For page layouts: pages are 1-indexed for sanity reasons, and the order for the back list must be reversed

@@ -1,7 +1,53 @@
 /**
+ * @overview Utilities for handling input and file change events from the user interface.
+ * @license MPL-2.0 (a copy of the MPL can be obtained at https://mozilla.org/MPL/2.0/)
+ * 
+ * @module layout
+ * @exports {calculateLayout, calculateDimensions}
+ */
+
+import { Book } from '../book.js';
+import { PAGE_SIZES } from '../constants.js';
+
+/**
+ * Object representing a PDFs layout dimensions, including info about sizing, scaling, padding, shifting, and positioning.
+ * @typedef dimensions
+ * @type {Object}
+ * 
+ * @property {PAGE_SIZES} layout - 2-entry array of the largest possible space the PDF page could take within the layout (and not overflow)
+ * @property {number[]} rawPdfSize - 2 dimensional array of dimensions for the PDF (pre scaled)
+ * @property {number[]} pdfSize - 2 dimensional array of dimensions for the PDF page + margins (pre scaled)
+ * @property {number[]} pdfScale - 2 dimensional array of scaling factors for the raw PDF so it fits in layoutCell (w/ margins)
+ * @property {Object} padding - object containing the already scaled padding. Keys are: fore_edge, binding, top, bottom
+ * @property {Function} xForeEdgeShiftFunc - requires the page rotation, in degrees. In pts, already scaled.
+ * @property {Function} xBindingShiftFunc - requires the page rotation, in degrees. In pts, already scaled.
+ * @property {Function} xPdfWidthFunc -  requires the page rotation, in degrees. In pts, already scaled.
+ * @property {Function} yPdfHeightFunc - requires the page rotation, in degrees. In pts, already scaled.
+ * @property {Function} yTopShiftFunc -  requires the page rotation, in degrees. In pts, already scaled.
+ * @property {Function} yBottomShiftFunc -  requires the page rotation, in degrees. In pts, already scaled.
+ * @property {string} positioning - page positioning mode
+ */
+
+/**
+ * 
+ *      layoutCell: 2 dimensional array of the largest possible space the PDF page could take within the layout (and not overflow)
+ *      rawPdfSize: 2 dimensional array of dimensions for the PDF (pre scaled)
+ *      pdfSize: 2 dimensional array of dimensions for the PDF page + margins (pre scaled)
+ *      pdfScale: 2 dimensional array of scaling factors for the raw PDF so it fits in layoutCell (w/ margins)
+ *      padding: object containing the already scaled padding. Keys are: fore_edge, binding, top, bottom
+ *      xForeEdgeShiftFunc: requires the page rotation, in degrees. In pts, already scaled.
+ *      xBindingShiftFunc: requires the page rotation, in degrees. In pts, already scaled.
+ *      xPdfWidthFunc:  requires the page rotation, in degrees. In pts, already scaled.
+ *      yPdfHeightFunc: requires the page rotation, in degrees. In pts, already scaled.
+ *      yTopShiftFunc:  requires the page rotation, in degrees. In pts, already scaled.
+ *      yBottomShiftFunc:  requires the page rotation, in degrees. In pts, already scaled.
+ */
+
+/**
  * When considering page size, don't forget to take into account
  *  this.padding_pt's ['top','bottom','binding','fore_edge'] values
  *
+ * @param {Book} book - {@link Book} object containing layout, padding, and sizing info
  * @return {import("../book.js").Position[]}
  */
 export function calculateLayout(book) {
@@ -73,6 +119,9 @@ export function calculateLayout(book) {
 }
 
 /**
+ * 
+ * @param {Book} book - {@link Book} object containing cropbox, padding_pt, papersize, page_layout, page_positioning, page_scaling
+ * 
  * Looks at [this.cropbox] and [this.padding_pt] and [this.papersize] and [this.page_layout] and [this.page_scaling]
  * in order to calculate the information needed to render a PDF page within a layout cell. It provides several functions
  * in the return object that calculate the positioning and scaling needed when provided the rotation information.

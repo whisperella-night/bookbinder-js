@@ -1,7 +1,18 @@
+/**
+ * @overview Utility functions for drawing fold lines, crop marks, sewing marks, spine marks, and signature order marks on imposed PDFs.
+ * @license MPL-2.0 (a copy of the MPL can be obtained at https://mozilla.org/MPL/2.0/)
+ * 
+ * @module drawing
+ * @exports {drawFoldlines, drawCropmarks, drawSewingMarks, drawSpineMark, drawSigOrderMark}
+ */
+
+import { Book } from '../book.js';
 import { LINE_LEN } from '../constants';
 import { rgb, grayscale } from '@cantoo/pdf-lib';
 
 /**
+ * @deprecated
+ * @todo Delete this Point typedef.
  * @typedef Point
  * @type {object}
  * @property {number} x - horizontal position
@@ -9,28 +20,35 @@ import { rgb, grayscale } from '@cantoo/pdf-lib';
  */
 
 /**
+ * Represents a point in 2D space.
+ * @typedef Point
+ * @type {object}
+ * 
+ * @property {number} x - horizontal position
+ * @property {number} y - vertical position
+ * @property {number} size - point size
+ * @property {(Grayscale|RGB|CMYK)} color - point color
+ */
+
+/**
+ * Represents a line between 2 points in 2D space.
  * @typedef Line
  * @type {object}
+ * 
  * @property {Point} start - start position
  * @property {Point} end - end position
- * @property {number} [opacity] - line opacity
- * @property {number[]} [dashArray] - sequence of dash and gap lengths to be repeated for a dashed line
+ * @property {number} [opacity] - (optional) line opacity
+ * @property {number[]} [dashArray] - (optional) sequence of dash and gap lengths to be repeated for a dashed line
  */
 
-/**
- * @typedef Point
- * @property {number} x,
- * @property {number} y,
- * @property {number} size,
- * @property {Grayscale|RGB|CMYK} color,
- *
- */
 
 /**
- *  @param {boolean} side2flag - whether we're on the back or not.
+ * Generates list of fold lines for a PDF page based on imposition parameters.
+ * @param {boolean} side2flag - whether we're on the back or not.
  * @param {boolean} duplexrotate - if alternate sides are rotated or not
  * @param {number[]} papersize - paper dimensions
  * @param {number} per_sheet - pages per sheet of paper
+ * 
  * @returns {Line[]}
  */
 export function drawFoldlines(side2flag, duplexrotate, papersize, per_sheet) {
@@ -88,6 +106,7 @@ export function drawFoldlines(side2flag, duplexrotate, papersize, per_sheet) {
 }
 
 /**
+ * Generates crop marks for a sheet based on imposition parameters.
  * @param {number[]} papersize - paper dimensions
  * @param {number} per_sheet - number of pages per sheet of paper
  * @returns {Line[]}
@@ -122,12 +141,14 @@ export function drawCropmarks(papersize, per_sheet) {
 }
 
 /**
- * @param {@param {import("../book.js").PageInfo}} sigDetails - information about signature where marks will be printed
- * @param {import("../book.js").Position} position - position info object
- * @param sewingMarkLocation - see ./models/configuration.js for possible values
+ * Draws sewing marks for a signature.
+ * @param {Book.PageInfo} sigDetails - information about signature where marks will be printed
+ * @param {Book.Position} position - position info object
+ * @param {string} sewingMarkLocation - see ./models/configuration.js for possible values
  * @param {number} amount - amount of sewing crosses.
  * @param {number} marginPt - distance from the end of sheet of paper to kettle mark
- * @param {number} tapeWidthPt - distance between two points in a single sewwing cross.
+ * @param {number} tapeWidthPt - distance between two points in a single sewing cross.
+ * 
  * @returns {Point[]}
  */
 export function drawSewingMarks(
@@ -206,8 +227,9 @@ export function drawSewingMarks(
 }
 
 /**
+ * Draws a spine mark at the top or bottom of the page.
  * @param {boolean} draw_top_mark - true to draw mark at top of PDF, false for bottom of PDF
- * @param {import("../book.js").Position} position - position info object
+ * @param {Book.Position} position - position info object
  * @param {number} w - width of the line in pts
  * @returns {Line}
  */
@@ -242,10 +264,11 @@ export function drawSpineMark(draw_top_mark, position, w) {
 }
 
 /**
- * TODO : these params should probably be pushed into a config... maybe next time/next pass
+ * Draws a signature order mark on the spine edge of the page.
+ * @todo these params should probably be pushed into a config... maybe next time/next pass
  *
- * @param {import("../book.js").PageInfo} sigDetails - page info object
- * @param {import("../book.js").Position} position - position info object
+ * @param {Book.PageInfo} sigDetails - page info object
+ * @param {Book.Position} position - position info object
  * @param {number} maxSigCount - number of total signatures
  * @param {number} w - width of the mark in pts
  * @param {number} suggested_h - suggested height of the mark in pts (can be scaled down to fit all marks between PDF top/bottom)
@@ -283,6 +306,8 @@ export function drawSigOrderMark(sigDetails, position, maxSigCount, w, suggested
     opacity: 0.5,
   };
 }
+
+
 /**
  * @param {number} x
  * @param {number} ystart
