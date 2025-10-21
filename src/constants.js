@@ -7,16 +7,87 @@
  */
 
 /**
- * Default line length for crop and fold marks (in pt).
- * @constant {number}
+ * Specifications for how to impose the pages from a user's uploaded document onto a sheet of paper (front and back).
+ * @typedef {Object} ImpositionSpecs
+ * 
+ * @property {number[][]} rotations - 2D array specifying individual page rotations for each page on a sheet of paper
+ * @property {boolean} landscape - whether the individual pages should be in landscape orientation
+ * @property {number} rows - number of rows (of individual pages) to be used per page
+ * @property {number} cols - number of columns (of individual pages) to be used per page
+ * @property {number} per_sheet - total number of pages expected per sheet (rows &times; cols &times; 2)
  */
-export const LINE_LEN = 18;
+
+/**
+ * Numerical arrays specifying how the user's input pages should be ordered - on the front, the back, and in a rotated view (i.e. duplex printing with edges flipped on the long-side). For sanity reasons, page numbering will be 1-based: first page is 1, second page is 2, etc.
+ * @typedef {Object} PageOrder
+ * 
+ * @property {number[]} front - page sequence for front of the sheet, placed in the page rows and columns by order of: **left-to-right** &rarr;, **bottom-to-top** &uarr;, starting in the bottom right
+ * @property {number[]} back - page sequence for back of the sheet, placed in the page rows and columns by order of: **left-to-right** &rarr;, **bottom-to-top** &uarr;, starting in the bottom right
+ * @property {number[]} rotate - array containing a reversed version of the [back]{@link PageOrder.back} sequence array, for use in cases where alternative rotations might be necessary (i.e. duplex printing, flipped on the long-side)
+ */
 
 
 /**
- * Page sizes in points (pt), keyed by name.
- * @typedef {Object<string, number[]>} LayoutSizes
- * @constant {StandardPageSizes}
+ * Default line length for crop and fold marks (in pt).
+ * @constant {number}
+ * @static
+ */
+export const LINE_LEN = 18;
+
+/**
+ * List of industry-recognized paper sizes, measured in pt.
+ * @constant {Object}
+ * @static
+ * 
+ * @property {number[]} LETTER - 612 &times; 792 (pt)
+ * @property {number[]} NOTE - 540 &times; 720 (pt)
+ * @property {number[]} LEGAL - 612 &times; 1008 (pt)
+ * @property {number[]} TABLOID - 792 &times; 1224 (pt)
+ * @property {number[]} EXECUTIVE - 522 &times; 756 (pt)
+ * @property {number[]} POSTCARD - 283 &times; 416 (pt)
+ * @property {number[]} A0 - 2384 &times; 3370 (pt)
+ * @property {number[]} A1 - 1684 &times; 2384 (pt)
+ * @property {number[]} A3 - 842 &times; 1191 (pt)
+ * @property {number[]} A4 - 595 &times; 842 (pt)
+ * @property {number[]} A5 - 420 &times; 595 (pt)
+ * @property {number[]} A6 - 297 &times; 420 (pt)
+ * @property {number[]} A7 - 210 &times; 297 (pt)
+ * @property {number[]} A8 - 148 &times; 210 (pt)
+ * @property {number[]} A9 - 105 &times; 148 (pt)
+ * @property {number[]} B0 - 2834 &times; 4008 (pt)
+ * @property {number[]} B1 - 2004 &times; 2834 (pt)
+ * @property {number[]} B2 - 1417 &times; 2004 (pt)
+ * @property {number[]} B3 - 1000 &times; 1417 (pt)
+ * @property {number[]} B4 - 708 &times; 1000 (pt)
+ * @property {number[]} B5 - 498 &times; 708 (pt)
+ * @property {number[]} B6 - 354 &times; 498 (pt)
+ * @property {number[]} B7 - 249 &times; 354 (pt)
+ * @property {number[]} B8 - 175 &times; 249 (pt)
+ * @property {number[]} B9 - 124 &times; 175 (pt)
+ * @property {number[]} B10 - 87 &times; 124 (pt)
+ * @property {number[]} ARCH_E - 2592 &times; 3456 (pt)
+ * @property {number[]} ARCH_C - 1296 &times; 1728 (pt)
+ * @property {number[]} ARCH_B - 864 &times; 1296 (pt)
+ * @property {number[]} ARCH_A - 648 &times; 864 (pt)
+ * @property {number[]} FLSA - 612 &times; 936 (pt)
+ * @property {number[]} FLSE - 648 &times; 936 (pt)
+ * @property {number[]} HALFLETTER - 396 &times; 612 (pt)
+ * @property {number[]} _11X17 - 792 &times; 1224 (pt)
+ * @property {number[]} ID_1 - 242.65 &times; 153 (pt)
+ * @property {number[]} ID_2 - 297 &times; 210 (pt)
+ * @property {number[]} ID_3 - 354 &times; 249 (pt)
+ * @property {number[]} LEDGER - 1224 &times; 792 (pt)
+ * @property {number[]} CROWN_QUARTO - 535 &times; 697 (pt)
+ * @property {number[]} LARGE_CROWN_QUARTO - 569 &times; 731 (pt)
+ * @property {number[]} DEMY_QUARTO - 620 &times; 782 (pt)
+ * @property {number[]} ROYAL_QUARTO - 671 &times; 884 (pt)
+ * @property {number[]} CROWN_OCTAVO - 348 &times; 527 (pt)
+ * @property {number[]} LARGE_CROWN_OCTAVO - 365 &times; 561 (pt)
+ * @property {number[]} DEMY_OCTAVO - 391 &times; 612 (pt)
+ * @property {number[]} ROYAL_OCTAVO - 442 &times; 663 (pt)
+ * @property {number[]} SMALL_PAPERBACK - 314 &times; 504 (pt)
+ * @property {number[]} PENGUIN_SMALL_PAPERBACK - 314 &times; 513 (pt)
+ * @property {number[]} PENGUIN_LARGE_PAPERBACK - 365 &times; 561 (pt)
  */
 export const PAGE_SIZES = {
   LETTER: [612, 792],
@@ -71,27 +142,30 @@ export const PAGE_SIZES = {
 };
 
 /**
- * Target book sizes for standard and large formats.
- * @type {Object<string, number[]>}
- * @property {number[]} standard - Standard book size [width, height] in points.
+ * Target book sizes for standard and large formats, measured in pt.
+ * @constant {Object}
+ * @static
+ * 
+ * @property {number[]} standard - 314.5 &times; 502.0 (pt)
+ * @property {number[]} large - 368.5 &times; 558.5 (pt)
  */
 export const TARGET_BOOK_SIZE = {
   standard: [314.5, 502.0],
   large: [368.5, 558.5],
 };
 
-
 /**
- * Layout definitions for folio, quarto, octavo, and sextodecimo impositions.
- * Each layout specifies rotations, orientation, rows, columns, and pages per sheet.
- * @type {Object<string, Object>}
+ * Collection of {@link ImpositionSpecs} for the folio, quarto, octavo, and sextodecimo layouts, ***not** including how the pages should be ordered.* **(NOTE: Values are based on the degree of rotation a page needs to be imposed on a portrait-oriented page.)**
+ * @constant {Object}
+ * @static
+ * 
+ * @property {ImpositionSpecs} folio - 2 pages per side, 4 per sheet
+ * @property {ImpositionSpecs} folio_alt - variant of folio, with pages rotated in the opposite direction
+ * @property {ImpositionSpecs} quarto - 4 pages per side, 8 per sheet
+ * @property {ImpositionSpecs} octavo - 8 pages per side, 16 per sheet
+ * @property {ImpositionSpecs} sextodecimo - 16 pages per side, 32 per sheet
  */
 export const PAGE_LAYOUTS = {
-  /*
-	Pages in these layouts are assumed to be already reordered. Layout should go left to right, top to bottom.
-
-	Values are the degree of rotation from a portrait offset needed to re-impose this on a portrait-oriented page, and should only need to be specified for one side.
-	*/
   folio: {
     rotations: [[-90], [-90]],
     landscape: true,
@@ -143,18 +217,16 @@ export const PAGE_LAYOUTS = {
 };
 
 /**
- * Imposition templates for booklet binding, keyed by pages per sheet.
- * Each template includes front, back, and rotate arrays (1-indexed).
- * @type {Object<number, Object>}
+ * Collection of {@link PageOrder} objects for booklet layouts, indexed by number of pages per sheet (front &plus; back). All layouts assume 1-indexed numbering of pages.
+ * @constant {Object} BOOKLET_LAYOUTS
+ * @static
+ * 
+ * @property {PageOrder} 4 - layout for 4 pages per sheet (2 per side)
+ * @property {PageOrder} 8 - layout for 8 pages per sheet (4 per side)
+ * @property {PageOrder} 16 - layout for 16 pages per sheet (8 per side)
+ * @property {PageOrder} 32 - layout for 32 pages per sheet (16 per side)
  */
 export const BOOKLET_LAYOUTS = {
-  /*
-    For page layouts: pages are 1-indexed for sanity reasons, and the order for the back list must be reversed
-
-    'front' will be the side that ends up with consecutive pagenumbers on the innermost fold, by convention.
-    
-    page numbers should be listed from left to right, top to bottom, starting in the top left.
-    */
   4: {
     front: [3, 2],
     back: [1, 4],
@@ -178,29 +250,18 @@ export const BOOKLET_LAYOUTS = {
 };
 
 /**
- * Page layout order arrays (front, back, rotate), based on expected pages per sheet and binding style.
- * @typedef {Object<pagesPerSheet: number, layoutOrdering: Object>} ImpositionLayout
+ * **Not currently in use within the app - {@link BOOKLET_LAYOUTS} in circulation instead, as they are functionally identical.** Collection of {@link PageOrder} objects for perfect-bound layouts, indexed by number of pages per sheet (front &plus; back). All layouts assume 1-indexed numbering of pages.
+ * @constant {Object} PERFECTBOUND_LAYOUTS
+ * @static
  * 
- * @property {number} pagesPerSheet - number of pages per side of sheet
- * @property {Object} layoutOrdering - layout object containing front, back, and rotate arrays
- * @property {number[]} layoutOrdering.front - array of page numbers for front side (1-indexed)
- * @property {number[]} layoutOrdering.back - array of page numbers for back side (1-indexed, reversed order)
- * @property {number[]} layoutOrdering.rotate - array of rotation degrees for each page position (1-indexed)
- */
-
-/**
- * Imposition templates for perfect bound books, keyed by pages per sheet.
- * Each template includes front, back, and rotate arrays (1-indexed).
- * @type ImpositionLayout
+ * @property {PageOrder} 4 - layout for 4 pages per sheet (2 per side)
+ * @property {PageOrder} 8 - layout for 8 pages per sheet (4 per side)
+ * @property {PageOrder} 16 - layout for 16 pages per sheet (8 per side)
+ * @property {PageOrder} 32 - layout for 32 pages per sheet (16 per side)
+ * 
+ * @deprecated 
  */
 export const PERFECTBOUND_LAYOUTS = {
-  /*
-    For page layouts: pages are 1-indexed for sanity reasons, and the order for the back list must be reversed
-
-    'front' will be the side that ends up with consecutive pagenumbers on the innermost fold, by convention.
-    
-    page numbers should be listed from left to right, top to bottom, starting in the top left.
-    */
   4: {
     front: [3, 2],
     back: [1, 4],
