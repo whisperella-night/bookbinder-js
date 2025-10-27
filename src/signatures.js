@@ -1,6 +1,9 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+/**
+ * @overview Represents the signature(s) of a book. The main purpose for which is to take a list of page numbers and rearrange them in the appropriate order for printing as signatures.
+ * @license MPL-2.0 (a copy of the MPL can be obtained at {@link https://mozilla.org/MPL/2.0/})
+ * 
+ * @module Signatures
+ */
 
 import { BOOKLET_LAYOUTS } from './constants';
 

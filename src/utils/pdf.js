@@ -1,8 +1,8 @@
 /**
  * @overview Asynchronous helper functions for manipulating PDFs.
- * @license MPL-2.0 (a copy of the MPL can be obtained at https://mozilla.org/MPL/2.0/)
+ * @license MPL-2.0 (a copy of the MPL can be obtained at {@link https://mozilla.org/MPL/2.0/})
  *
- * @module pdf
+ * @module PDF
  * @exports { interleavePages, embedPagesInNewPdf }
  */
 

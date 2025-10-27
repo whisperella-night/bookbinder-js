@@ -1,53 +1,45 @@
 /**
  * @overview Utility functions for drawing fold lines, crop marks, sewing marks, spine marks, and signature order marks on imposed PDFs.
- * @license MPL-2.0 (a copy of the MPL can be obtained at https://mozilla.org/MPL/2.0/)
+ * @license MPL-2.0 (a copy of the MPL can be obtained at {@link https://mozilla.org/MPL/2.0/})
  * 
- * @module drawing
+ * @module Drawing
  * @exports {drawFoldlines, drawCropmarks, drawSewingMarks, drawSpineMark, drawSigOrderMark}
  */
 
 import { Book } from '../book.js';
 import { LINE_LEN } from '../constants';
-import { rgb, grayscale } from '@cantoo/pdf-lib';
+import { rgb, grayscale, cmyk, ColorTypes } from '@cantoo/pdf-lib';
 
-/**
- * @deprecated
- * @todo Delete this Point typedef.
- * @typedef Point
- * @type {object}
- * @property {number} x - horizontal position
- * @property {number} y - vertical position
- */
 
 /**
  * Represents a point in 2D space.
- * @typedef Point
- * @type {object}
+ * @typedef {Object} Point
  * 
  * @property {number} x - horizontal position
  * @property {number} y - vertical position
- * @property {number} size - point size
- * @property {(Grayscale|RGB|CMYK)} color - point color
+ * @property {number} [size] - point size
+ * @property {(ColorTypes.RGB|ColorTypes.Grayscale|ColorTypes.CMYK)} [color] - color of created point - expressed in either RGB, Grayscale, or CMYK
  */
 
 /**
  * Represents a line between 2 points in 2D space.
- * @typedef Line
- * @type {object}
+ * @typedef {Object} Line
  * 
  * @property {Point} start - start position
  * @property {Point} end - end position
+ * @property {number} [thickness] - (optional) line thickness
  * @property {number} [opacity] - (optional) line opacity
  * @property {number[]} [dashArray] - (optional) sequence of dash and gap lengths to be repeated for a dashed line
  */
 
 
 /**
- * Generates list of fold lines for a PDF page based on imposition parameters.
- * @param {boolean} side2flag - whether we're on the back or not.
- * @param {boolean} duplexrotate - if alternate sides are rotated or not
- * @param {number[]} papersize - paper dimensions
- * @param {number} per_sheet - pages per sheet of paper
+ * Generates list of folding lines [*for the back page of a sheet*], based on provided imposition parameters.
+ * 
+ * @param {boolean} side2flag - flag to ensure these folding lines are only printed on the back side of a sheet (*side 2*)
+ * @param {boolean} duplexrotate - flag to determine if back side of sheet needs alternative rotation (*i.e. duplex printing while flipping on the long edge*)
+ * @param {number[]} papersize - the printing paper's width &times; length, measured in pt
+ * @param {number} per_sheet - number of original pages expected on each sheet of paper, front &amp; back
  * 
  * @returns {Line[]}
  */
@@ -59,6 +51,7 @@ export function drawFoldlines(side2flag, duplexrotate, papersize, per_sheet) {
   let x, xStart, xEnd;
   let y, yStart, yEnd;
   const [width, height] = papersize;
+  /** @type {Line[]} */
   const lines = [];
 
   switch (per_sheet) {
@@ -106,12 +99,15 @@ export function drawFoldlines(side2flag, duplexrotate, papersize, per_sheet) {
 }
 
 /**
- * Generates crop marks for a sheet based on imposition parameters.
- * @param {number[]} papersize - paper dimensions
- * @param {number} per_sheet - number of pages per sheet of paper
+ * Generates list of crop marks for a sheet, based on provided imposition paramters.
+ * 
+ * @param {number[]} papersize - the printing paper's width &times; length, measured in pt
+ * @param {number} per_sheet - number of original pages expected on each sheet of paper, front &amp; back
+ * 
  * @returns {Line[]}
  */
 export function drawCropmarks(papersize, per_sheet) {
+  /** @type {Array.<Line>} */
   let lines = [];
   const [width, height] = papersize;
   switch (per_sheet) {
@@ -141,13 +137,14 @@ export function drawCropmarks(papersize, per_sheet) {
 }
 
 /**
- * Draws sewing marks for a signature.
- * @param {Book.PageInfo} sigDetails - information about signature where marks will be printed
- * @param {Book.Position} position - position info object
- * @param {string} sewingMarkLocation - see ./models/configuration.js for possible values
- * @param {number} amount - amount of sewing crosses.
- * @param {number} marginPt - distance from the end of sheet of paper to kettle mark
- * @param {number} tapeWidthPt - distance between two points in a single sewing cross.
+ * Generates list of points representing where on a 2-page spread to draw sewing marks, based on provided signature and page positioning info.
+ * 
+ * @param {Book.PageInfo} sigDetails - information on the overall signature, and where the current page resides in its sequence of pages
+ * @param {Book.Position} position - information on the current page's positioning on a sheet of paper (*coordinates denoted in pt*)
+ * @param {string} sewingMarkLocation - configuration which determines whether sewing marks for this page's signature should be drawn along the spine (***only_out***), in the innermost 2-page spread (***only_in***), on both (***in_n_out***), or across *every* 2-page spread (***all***)
+ * @param {number} amount - number of sewing points to be added
+ * @param {number} marginPt - required distance between the page's edges and first/last sewing marks (*measured in pt*)
+ * @param {number} tapeWidthPt - width of bookbinding tape that the sewing marks are meant to encase (*measured in pt*)
  * 
  * @returns {Point[]}
  */
@@ -227,10 +224,12 @@ export function drawSewingMarks(
 }
 
 /**
- * Draws a spine mark at the top or bottom of the page.
- * @param {boolean} draw_top_mark - true to draw mark at top of PDF, false for bottom of PDF
- * @param {Book.Position} position - position info object
- * @param {number} w - width of the line in pts
+ * Generates a line at either the top or bottom of a 2-page spread, indicateing where the spine should be located.
+ * 
+ * @param {boolean} draw_top_mark - flag to determine if the line should be drawn at the top (**true**) or bottom (**false**)
+ * @param {Book.Position} position - information on the current page's positioning on a sheet of paper (*coordinates denoted in pt*)
+ * @param {number} w - expected size of spine mark (*measured in pt*)
+ * 
  * @returns {Line}
  */
 export function drawSpineMark(draw_top_mark, position, w) {
@@ -270,8 +269,9 @@ export function drawSpineMark(draw_top_mark, position, w) {
  * @param {Book.PageInfo} sigDetails - page info object
  * @param {Book.Position} position - position info object
  * @param {number} maxSigCount - number of total signatures
- * @param {number} w - width of the mark in pts
- * @param {number} suggested_h - suggested height of the mark in pts (can be scaled down to fit all marks between PDF top/bottom)
+ * @param {number} w - width of ordering mark, measured in pt
+ * @param {number} suggested_h - suggested height of the mark, measured in pt (*can be scaled down to fit all marks between PDF top/bottom*)
+ * 
  * @returns {Line}
  */
 export function drawSigOrderMark(sigDetails, position, maxSigCount, w, suggested_h) {
@@ -309,9 +309,12 @@ export function drawSigOrderMark(sigDetails, position, maxSigCount, w, suggested
 
 
 /**
- * @param {number} x
- * @param {number} ystart
- * @param {number} yend
+ * Quick helper to generate a vertical line.
+ * 
+ * @param {number} x - horizontal position of this vertical line
+ * @param {number} ystart - starting vertical position
+ * @param {number} yend - ending vertical position
+ * 
  * @returns {Line}
  */
 function drawVLine(x, ystart, yend) {
@@ -319,9 +322,12 @@ function drawVLine(x, ystart, yend) {
 }
 
 /**
- * @param {number} y
- * @param {number} xstart
- * @param {number} xend
+ * Quick helper to generate a horizontal line.
+ * 
+ * @param {number} y - vertical position of this horizontal line
+ * @param {number} xstart - starting horizontal position
+ * @param {number} xend - ending horizontal position
+ * 
  * @returns {Line}
  */
 function drawHLine(y, xstart, xend) {
@@ -329,9 +335,12 @@ function drawHLine(y, xstart, xend) {
 }
 
 /**
- * @param {number} x
- * @param {number} ystart
- * @param {number} yend
+ * Quick helper to generate 2 lines which signify where a user should **vertically** crop a sheet of paper. (*Both lines have a height determined by the global {@link LINE_LEN} constant.*)
+ * 
+ * @param {number} x - horizontal position of both crop marks
+ * @param {number} ystart - starting vertical position of first line
+ * @param {number} yend - ending vertical position of last line
+ * 
  * @returns {Line[]}
  */
 function drawVCrop(x, ystart, yend) {
@@ -342,9 +351,12 @@ function drawVCrop(x, ystart, yend) {
 }
 
 /**
- * @param {number} y
- * @param {number} xstart
- * @param {number} xend
+ * Quick helper to generate 2 lines which signify where a user should **horizontally** crop a sheet of paper. (*Both lines have a width determined by the global {@link LINE_LEN} constant.*)
+ * 
+ * @param {number} y - vertical position of both crop marks
+ * @param {number} xstart - starting horizontal position of first line
+ * @param {number} xend - ending horizontal position of last line
+ * 
  * @returns {Line[]}
  */
 function drawHCrop(y, xstart, xend) {
@@ -355,8 +367,11 @@ function drawHCrop(y, xstart, xend) {
 }
 
 /**
- * @param {number} y
- * @param {number} x
+ * Quick helper to generate a vertical and horizontal line, whose midpoints intersect at [x, y], creating a crosshair. (*Overall height and width of the crosshair is 2 &times; {@link LINE_LEN}, a global constant.*)
+ * 
+ * @param {number} x - horizontal position of the crosshair's midpoint
+ * @param {number} y - vertical position of the crosshair's midpoint
+ * 
  * @returns {Line[]}
  */
 function drawCross(x, y) {

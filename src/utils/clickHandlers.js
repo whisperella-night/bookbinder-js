@@ -1,8 +1,8 @@
 /**
  * @overview Utilities for handling "Generate PDF Output", "Preview PDF", "Reset Settings", and the checkbox event for "Add marks for sewing:".
- * @license MPL-2.0 (a copy of the MPL can be obtained at https://mozilla.org/MPL/2.0/)
+ * @license MPL-2.0 (a copy of the MPL can be obtained at {@link https://mozilla.org/MPL/2.0/})
  *
- * @module clickHandlers
+ * @module ClickHandlers
  * @exports {handleGenerateClick, handlePreviewClick, handleResetSettingsClick, handleSewingMarksCheckboxState}
  */
 

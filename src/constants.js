@@ -1,8 +1,8 @@
 /**
  * @overview Constants used throughout the application for page sizes and imposition schemes.
- * @license MPL-2.0 (a copy of the MPL can be obtained at https://mozilla.org/MPL/2.0/)
+ * @license MPL-2.0 (a copy of the MPL can be obtained at {@link https://mozilla.org/MPL/2.0/})
  * 
- * @module constants
+ * @module Constants
  * @exports {LINE_LEN, PAGE_SIZES, TARGET_BOOK_SIZE, PAGE_LAYOUTS, BOOKLET_LAYOUTS, PERFECTBOUND_LAYOUTS}
  */
 

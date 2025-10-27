@@ -1,14 +1,14 @@
 /**
- * @overview Configuration schema used throughout the app to enforce clean data and type safety, along with . *(Makes use of NodeJS's Zod library, a "TypeScript-first schema declaration and validation library", used to enforce type safety in an environment like JS.)*
- * @license MPL-2.0 (a copy of the MPL can be obtained at https://mozilla.org/MPL/2.0/)
+ * @overview Schema used throughout the app to enforce clean data and type safety, along with . *(Makes use of NodeJS's Zod library, a "TypeScript-first schema declaration and validation library", used to enforce type safety in an environment like JS.)*
+ * @license MPL-2.0 (a copy of the MPL can be obtained at {@link https://mozilla.org/MPL/2.0/})
  * 
- * @module configuration
+ * @module Configuration
  * @exports {schema, defaultConfig}
  */
 
 import { z, ZodObject, ZodType } from 'zod';
-import { PAGE_SIZES } from '../constants';
 import { ZodOptional } from 'zod/v4';
+import { PAGE_SIZES } from '../constants';
 
 
 /**
@@ -99,6 +99,7 @@ const sourceRotation = urlSafe(
  * URL-safe configuration setting, defining which sides of a sheet sewing marks should be placed.
  * @constant {ZodType<string>} sewingMarkLocation
  * @default 'all'
+ * @see {@link ../utils/drawing.js#drawSewingMarks} for further details
  */
 const sewingMarkLocation = urlSafe(z.enum(['all', 'only_out', 'only_in', 'in_n_out'])).default(
   'all'

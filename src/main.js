@@ -1,6 +1,9 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+/**
+ * @overview This is the main module for the imposition app for bookbinding, creating connections between the UI and various helper JS modules once the DOM is loaded.
+ * @license MPL-2.0 (a copy of the MPL can be obtained at {@link https://mozilla.org/MPL/2.0/})
+ * 
+ * @module Main
+ */
 
 import { Book } from './book.js';
 import { loadForm } from './utils/formUtils.js';
@@ -13,6 +16,11 @@ import {
 } from './utils/clickHandlers.js';
 import { renderPaperSelectOptions } from './utils/renderUtils.js';
 
+
+/**
+ * Event listener to initialize app once DOM is loaded.
+ * @listens DOMContentLoaded
+ */
 window.addEventListener('DOMContentLoaded', () => {
   // render dynamic content
   renderPaperSelectOptions();
@@ -31,7 +39,9 @@ window.addEventListener('DOMContentLoaded', () => {
     document.getElementsByClassName('source_rotation_example')
   );
 
-  // spin up a book to pass to listeners
+  /** 
+   * @constant {Book} book - {@link Book} instance used to manage the current book being passed to the different event listeners.
+   */
   const book = new Book(configuration);
 
   // add event listeners to grabbed elements

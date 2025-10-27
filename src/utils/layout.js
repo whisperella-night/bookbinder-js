@@ -1,8 +1,8 @@
 /**
- * @overview Utilities for handling input and file change events from the user interface.
- * @license MPL-2.0 (a copy of the MPL can be obtained at https://mozilla.org/MPL/2.0/)
+ * @overview 
+ * @license MPL-2.0 (a copy of the MPL can be obtained at {@link https://mozilla.org/MPL/2.0/})
  * 
- * @module layout
+ * @module Layout
  * @exports {calculateLayout, calculateDimensions}
  */
 
@@ -207,6 +207,8 @@ export function calculateDimensions(book) {
   const yPdfHeightFunc = function () {
     return pageY * sy - padding.top - padding.bottom;
   };
+
+  
   return {
     layout: page_layout,
     rawPdfSize: [width, height],

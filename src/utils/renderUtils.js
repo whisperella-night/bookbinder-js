@@ -1,9 +1,16 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+/**
+ * @overview Utility functions for rendering the imposition preview found at the end of the form.
+ * @license MPL-2.0 (a copy of the MPL can be obtained at {@link https://mozilla.org/MPL/2.0/})
+ * 
+ * @module RenderUtils
+ * @exports {renderPageCount, renderInfoBox, updatePageLayoutInfo}
+ */
 
+import { defaultConfig } from '../models/configuration.js';
+import { Book } from '../book.js';
 import { PAGE_SIZES } from '../constants';
 import { handleSewingMarksCheckboxState } from './clickHandlers.js';
+
 
 export function renderPageCount(book) {
   const pageCount = document.getElementById('page_count');
@@ -161,7 +168,7 @@ export function renderWacky() {
   document.getElementById('book_size').style.opacity = isWacky ? 0.3 : 1.0;
 }
 
-/** @param { import("../models/configuration").Configuration } configuration */
+
 export function renderFormFromSettings(configuration) {
   // Clear all checked attributes
   document.querySelectorAll('[type=radio]').forEach((e) => {

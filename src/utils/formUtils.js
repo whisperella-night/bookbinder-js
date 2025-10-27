@@ -1,6 +1,10 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+/**
+ * @overview 
+ * @license MPL-2.0 (a copy of the MPL can be obtained at {@link https://mozilla.org/MPL/2.0/})
+ * 
+ * @module FormUtils
+ * @exports {loadForm, saveForm, resetForm, updateRenderedForm}
+ */
 
 import { schema } from '../models/configuration';
 import { clearLocalSettings, getLocalSettings, setLocalSettings } from './localStorageUtils';
